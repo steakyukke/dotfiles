@@ -1,0 +1,58 @@
+onboarding = false
+
+[ui]
+status_indicators = "symbols"
+agent_panel_sort = "priority"   # Agents パネルを要対応順の一列表示にする（既定 "spaces" はワークスペース別グループ）
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+# ペインのボーダー色（src/ui/panes.rs: フォーカス中 = accent / 非フォーカス = overlay0）
+[theme.custom]
+accent   = "#80EBDF"   # WezTerm の border_*_color / cursor と同じ明るいシアン
+overlay0 = "#4B5263"   # 非アクティブは背景 #1a1a2e に馴染む暗めのグレー
+
+# =========================
+# キーバインド（prefix 後のキーを WezTerm の LEADER 配置に合わせる）
+# =========================
+# WezTerm 側の定義元:
+#   ~/.config/wezterm/keymaps.lua   (LEADER = ctrl+q, r/d/x/,/s)
+#   ~/.config/wezterm/workspace.lua (LEADER+w, workspace_mode の Shift+C)
+[keys]
+prefix = "ctrl+b"   # herdr 既定。WezTerm の LEADER (ctrl+q) とは別キーなので衝突しない
+
+# --- ペイン ---
+split_vertical   = "prefix+r"        # WezTerm: LEADER+r 右に分割
+split_horizontal = "prefix+d"        # WezTerm: LEADER+d 下に分割
+close_pane       = "prefix+x"        # WezTerm: LEADER+x ペインを閉じる
+resize_mode      = "prefix+s"        # WezTerm: LEADER+s setting_mode (hjkl でリサイズ)
+# WezTerm の Ctrl+Shift+Alt+hjkl (1ステップリサイズ) は、herdr がフォアグラウンドのとき
+# ~/.config/wezterm/modules/herdr_keys.lua が ctrl+alt+hjkl に変換して送ってくる
+resize_pane_left  = "ctrl+alt+h"
+resize_pane_down  = "ctrl+alt+j"
+resize_pane_up    = "ctrl+alt+k"
+resize_pane_right = "ctrl+alt+l"
+zoom             = "prefix+z"        # herdr 既定のまま (WezTerm は Ctrl+Shift+Z)
+focus_pane_left  = "prefix+h"        # herdr 既定のまま (WezTerm は Alt+hjkl)
+focus_pane_down  = "prefix+j"
+focus_pane_up    = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# --- タブ ---
+rename_tab = "prefix+comma"          # WezTerm: LEADER+, タブ名変更
+
+# --- ワークスペース ---
+workspace_picker = "prefix+w"        # WezTerm: LEADER+w ワークスペース選択
+new_workspace    = "prefix+shift+c"  # WezTerm: LEADER+w → Shift+C 新規ワークスペース
+
+# --- 既定と衝突するものを退避 ---
+settings = "prefix+shift+s"          # 既定 prefix+s を resize_mode に譲る
+
+[ui.toast]
+delivery = "system"
+
+# Agents 行に Claude Code が自動で付ける会話タイトル（端末タイトル OSC 0/2）を表示する。
+# terminal_title_stripped は先頭のスピナー/活動記号を除いたもの。
+[ui.sidebar.agents.rows_by_agent]
+claude = [["state_icon", "workspace", "tab"], ["terminal_title_stripped"]]
