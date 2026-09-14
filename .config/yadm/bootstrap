@@ -1,0 +1,11 @@
+#!/bin/bash
+# yadm clone 後に自動実行される。外部プラグインなど Git 管理外のものを揃える。
+set -eu
+
+# zsh-abbr: 略語展開プラグイン(.zshrc から source している)
+if [ ! -d "$HOME/.zsh/plugins/zsh-abbr" ]; then
+  echo "==> clone zsh-abbr"
+  git clone --recurse-submodules https://github.com/olets/zsh-abbr.git "$HOME/.zsh/plugins/zsh-abbr"
+fi
+
+echo "==> bootstrap done"

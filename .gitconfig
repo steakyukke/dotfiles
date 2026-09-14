@@ -1,0 +1,13 @@
+[user]
+	name = yukke
+	email = steak.yukke@gmail.com
+[init]
+	defaultBranch = main
+[core]
+	editor = code --wait
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

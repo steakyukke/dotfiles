@@ -1,0 +1,32 @@
+{
+  "title": "[ブラウザ]F5キーでページ更新",
+  "rules": [
+    {
+      "description": "[ブラウザ]F5キーでページ更新",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+              {
+                  "type": "frontmost_application_if",
+                  "bundle_identifiers": [
+                      "^com.apple.Safari",
+                      "^com.google.Chrome",
+                      "^com.microsoft.edgemac"
+                  ]
+              }
+          ],
+          "from": {
+            "key_code": "f5"
+          },
+          "to": {
+            "key_code": "r",
+            "modifiers": [
+              "command"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

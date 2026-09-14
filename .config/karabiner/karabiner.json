@@ -1,0 +1,214 @@
+{
+  "profiles": [
+    {
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "[ブラウザ]F5キーでページ更新",
+            "enabled": false,
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": [
+                      "^com.apple.Safari",
+                      "^com.google.Chrome",
+                      "^com.microsoft.edgemac"
+                    ],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": { "key_code": "f5" },
+                "to": {
+                  "key_code": "r",
+                  "modifiers": ["command"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "Command+→をOption+→にする",
+            "enabled": false,
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": ["command", "shift"]
+                  }
+                },
+                "to": {
+                  "key_code": "right_arrow",
+                  "modifiers": ["option"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "Command+←をOption+←にする",
+            "enabled": false,
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": ["command", "shift"]
+                  }
+                },
+                "to": {
+                  "key_code": "left_arrow",
+                  "modifiers": ["option"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Terminal]EndキーをControl+Eにする",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["^com.apple.Terminal"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "key_code": "end",
+                  "modifiers": { "optional": ["any"] }
+                },
+                "to": {
+                  "key_code": "e",
+                  "modifiers": ["control"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "[Terminal]HomeキーをControl+←Aにする",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["^com.apple.Terminal"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "key_code": "home",
+                  "modifiers": { "optional": ["any"] }
+                },
+                "to": {
+                  "key_code": "a",
+                  "modifiers": ["control"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "Command+Endでファイル末尾へ移動",
+            "enabled": false,
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "end",
+                  "modifiers": { "mandatory": ["command"] }
+                },
+                "to": {
+                  "key_code": "down_arrow",
+                  "modifiers": ["command"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "Command+Homeでファイル先頭へ移動",
+            "enabled": false,
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "home",
+                  "modifiers": { "mandatory": ["command"] }
+                },
+                "to": {
+                  "key_code": "up_arrow",
+                  "modifiers": ["command"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "EndキーをCommand+→にする（行末）",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "end",
+                  "modifiers": { "optional": ["shift"] }
+                },
+                "to": {
+                  "key_code": "right_arrow",
+                  "modifiers": ["command"]
+                },
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "HomeキーをCommand+←にする（行頭）",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "home",
+                  "modifiers": { "optional": ["shift"] }
+                },
+                "to": {
+                  "key_code": "left_arrow",
+                  "modifiers": ["command"]
+                },
+                "type": "basic"
+              }
+            ]
+          }
+        ]
+      },
+      "devices": [
+        {
+          "identifiers": { "is_keyboard": true },
+          "simple_modifications": [
+            {
+              "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+              "to": [{ "key_code": "left_command" }]
+            },
+            {
+              "from": { "key_code": "caps_lock" },
+              "to": [{ "key_code": "left_control" }]
+            },
+            {
+              "from": { "key_code": "left_control" },
+              "to": [{ "key_code": "left_option" }]
+            },
+            {
+              "from": { "key_code": "left_option" },
+              "to": [{ "key_code": "left_option" }]
+            },
+            {
+              "from": { "key_code": "right_option" },
+              "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
+            }
+          ]
+        }
+      ],
+      "name": "Default profile",
+      "selected": true,
+      "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+    }
+  ]
+}

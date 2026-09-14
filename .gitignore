@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Karabiner が自動生成するバックアップ
+.config/karabiner/automatic_backups/
+
+# エディタ・シェルの自動生成物
+.config/nvim/.luarc.json
+*.bak
+*.bak.*
+*.backup
+
+# 外部リポジトリの clone(bootstrap で取得する)
+.zsh/plugins/

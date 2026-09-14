@@ -1,0 +1,65 @@
+{
+  "title": "[Terminal]HomeキーとEndキー",
+  "rules": [
+    {
+      "description": "[Terminal]HomeキーをControl+←Aにする",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                  "^com.apple.Terminal"
+              ]
+            }
+          ],
+          "from": {
+            "key_code": "home",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": {
+            "key_code": "a",
+            "modifiers": [
+              "control"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "description": "[Terminal]EndキーをControl+Eにする",
+      "manipulators": [
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                  "^com.apple.Terminal"
+              ]
+            }
+          ],
+          "from": {
+            "key_code": "end",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": {
+            "key_code": "e",
+            "modifiers": [
+              "control"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

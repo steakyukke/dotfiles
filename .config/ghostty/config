@@ -1,0 +1,82 @@
+# =========================
+# Appearance 
+# =========================
+font-size = 14 
+theme = Solarized Dark Higher Contrast
+
+# WezTerm (appearance.lua) の colors 上書きと同じ値
+background = #1a1a2e
+foreground = #e6edf3
+cursor-color = #80EBDF
+cursor-text = #000000
+selection-background = #ffdd00
+selection-foreground = #000000
+
+# WezTerm の border_*_color / inactive_pane_hsb 相当
+split-divider-color = #80EBDF
+unfocused-split-opacity = 0.9
+unfocused-split-fill = #1a1a2e
+
+cursor-style = block
+mouse-hide-while-typing = true
+window-padding-balance = true
+window-save-state = always
+window-colorspace = "display-p3"
+
+# =========================
+# Breakline 
+# =========================
+keybind = shift+enter=text:\x1b\r
+
+# =========================
+# Word by word deletion
+# =========================
+keybind = alt+backspace=text:\x1b\x7f
+keybind = shift+backspace=text:\x1b\x7f
+
+# =========================
+# キー選定の方針（kado カスタマイズ）
+# =========================
+# Ctrl 単体（Ctrl+H など）は Neovim と zsh がほぼ全て使用済みのため使わない。
+#   Neovim: <C-h/j/k/l> はウィンドウ移動と診断ジャンプ
+#   zsh:    ^H=backspace ^J=accept-line ^K=kill-line ^L=clear-screen
+# Ctrl+Shift は Neovim・zsh ともにマッピングが存在しないため衝突しない。
+# WezTerm 側 (~/.config/wezterm/kado_keys.lua) にも同じキーを設定して揃えている。
+
+# =========================
+# Pane navigation
+# =========================
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+j=goto_split:down
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+l=goto_split:right
+
+# =========================
+# Pane splitting
+# =========================
+# 文字は WezTerm の LEADER(Ctrl+Q) の r / d / x と揃えている
+keybind = ctrl+shift+r=new_split:right
+keybind = ctrl+shift+d=new_split:down
+
+# =========================
+# Close pane / zoom
+# =========================
+# タブを閉じるのは Cmd+W のまま
+keybind = ctrl+shift+x=close_surface
+keybind = ctrl+shift+z=toggle_split_zoom
+
+# =========================
+# Resize panes
+# =========================
+# 移動と同じ hjkl に Alt を足す
+keybind = ctrl+shift+alt+h=resize_split:left,10
+keybind = ctrl+shift+alt+j=resize_split:down,10
+keybind = ctrl+shift+alt+k=resize_split:up,10
+keybind = ctrl+shift+alt+l=resize_split:right,10
+
+# =========================
+# scroll up/down 
+# =========================
+# vim の <C-y> <C-e> に対応させた文字
+keybind = ctrl+shift+y=scroll_page_lines:-3
+keybind = ctrl+shift+e=scroll_page_lines:3

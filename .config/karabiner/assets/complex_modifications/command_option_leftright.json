@@ -1,0 +1,57 @@
+{
+  "title": "Coomandキーで単語ごと移動",
+  "rules": [
+    {
+      "description": "Command+←をOption+←にする",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "left_arrow",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ],
+              "optional": [
+                "command",
+                "shift"
+              ]
+            }
+          },
+          "to": {
+            "key_code": "left_arrow",
+            "modifiers": [
+              "option"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "description": "Command+→をOption+→にする",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_arrow",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ],
+              "optional": [
+                "command",
+                "shift"
+              ]
+            }
+          },
+          "to": {
+            "key_code": "right_arrow",
+            "modifiers": [
+              "option"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
