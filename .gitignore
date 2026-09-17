@@ -10,9 +10,6 @@
 *.bak.*
 *.backup
 
-# 外部リポジトリの clone(bootstrap で取得する)
-.zsh/plugins/
-
 # herdr の実行時生成物
 .config/herdr/*.log
 .config/herdr/*.sock

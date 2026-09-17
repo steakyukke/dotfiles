@@ -1,4 +1,4 @@
-tap "olets/tap", trusted: { formulae: ["zsh-abbr"] }
+tap "olets/tap"
 # Dependency manager for Cocoa projects
 brew "cocoapods"
 # Secure runtime for JavaScript and TypeScript
@@ -35,6 +35,8 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Auto-expanding abbreviations manager for zsh, inspired by fish
+brew "olets/tap/zsh-abbr", trusted: true
 # Virtual Audio Driver
 cask "blackhole-2ch"
 cask "font-udev-gothic-nf"

@@ -45,4 +45,4 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # zsh-abbr: 略語展開（abbr add gc="git commit" → gc + Space で展開）。syntax-highlighting より後に読み込む
-source ~/.zsh/plugins/zsh-abbr/zsh-abbr.zsh
+source /opt/homebrew/share/zsh-abbr/zsh-abbr.zsh
