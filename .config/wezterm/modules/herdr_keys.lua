@@ -20,6 +20,8 @@
 --   close_tab        = prefix+shift+x ← WezTerm Cmd+W
 --   next_tab         = prefix+n   ← WezTerm Ctrl+Tab
 --   previous_tab     = prefix+p   ← WezTerm Ctrl+Shift+Tab
+--   switch_workspace = alt+1..9   ← WezTerm Ctrl+1..9
+--     （Ctrl+数字は WezTerm が ESC[27;5;49~ 形式で送り herdr が解釈できないため、ESC+数字 = Alt+数字 に変換して送る）
 --
 -- LEADER (Ctrl+q) 系のキーは herdr に転送せず、WezTerm のまま扱う。
 --
@@ -120,6 +122,17 @@ local keys = {
   { key = "Tab", mods = "CTRL", action = herdr_or(prefixed("n"), act.ActivateTabRelative(1)) },
   { key = "Tab", mods = "SHIFT|CTRL", action = herdr_or(prefixed("p"), act.ActivateTabRelative(-1)) },
 }
+
+-- ワークスペース切替 (Ctrl+1..9)
+-- herdr 側は switch_workspace = "alt+1..9"。herdr 以外のペインでは Ctrl+数字をそのまま送る（従来どおり）
+for n = 1, 9 do
+  local key = tostring(n)
+  table.insert(keys, {
+    key = key,
+    mods = "CTRL",
+    action = herdr_or({ { key = key, mods = "ALT" } }, act.SendKey({ key = key, mods = "CTRL" })),
+  })
+end
 
 function module.apply_to_config(config)
   for _, k in ipairs(keys) do
