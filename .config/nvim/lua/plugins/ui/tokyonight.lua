@@ -25,8 +25,8 @@ return {
         end
         -- 表ヘッダのセル文字（treesitter が @markup.heading を当てる）: 白の太字
         hl["@markup.heading.markdown"] = { fg = "#ffffff", bold = true }
-        -- インラインコード: 既定 fg blue (#82aaff) を白に寄せ、bg は既定 #444a73 より明度・彩度をわずかに下げる
-        hl["@markup.raw.markdown_inline"] = { fg = "#b4ccff", bg = "#43486a" }
+        -- インラインコード: 既定 fg blue (#82aaff) を白に寄せ、bg は既定 #444a73 (L36% S26%) より暗く (L31% S23%)
+        hl["@markup.raw.markdown_inline"] = { fg = "#b4ccff", bg = "#3d4261" }
         -- 箇条書きの点・リスト: H4 と同じ teal
         hl.RenderMarkdownBullet = { fg = c.teal }
         hl["@markup.list"] = { fg = c.teal }
