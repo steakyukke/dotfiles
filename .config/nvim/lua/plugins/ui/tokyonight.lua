@@ -13,25 +13,29 @@ return {
         hl.SnacksPickerPathIgnored = { fg = c.fg_dark }
 
         -- markdown プレビュー (render-markdown.nvim) の配色
-        -- 見出し: 既定は H1 青 / H2 黄 / H3 緑。H1 黄 / H2 緑 / H3 青 に入れ替え（帯色も文字色に合わせて回す）
-        local util = require("tokyonight.util")
-        hl["@markup.heading.1.markdown"] = { fg = c.yellow, bg = util.blend_bg(c.yellow, 0.1), bold = true }
-        hl["@markup.heading.2.markdown"] = { fg = c.green, bg = util.blend_bg(c.green, 0.1), bold = true }
-        hl["@markup.heading.3.markdown"] = { fg = c.blue, bg = util.blend_bg(c.blue, 0.1), bold = true }
+        -- 見出し: 既定は 青 / 黄 / 緑 / teal / 紫 / 桃 の順。H1 黄 / H2 青 / H3 紫 / H4 teal / H5 緑 / H6 桃 に変更。
+        -- 帯色は文字色を背景と 10% ブレンド（tokyonight と同じ計算）。
         -- tokyonight は RenderMarkdownH{n}Bg / Fg も既定の色順で別途定義しているので、同じ順に揃える
-        for i, color in ipairs({ c.yellow, c.green, c.blue }) do
+        local util = require("tokyonight.util")
+        local heading_colors = { c.yellow, c.blue, c.magenta, c.teal, c.green, c.purple }
+        for i, color in ipairs(heading_colors) do
+          hl["@markup.heading." .. i .. ".markdown"] = { fg = color, bg = util.blend_bg(color, 0.1), bold = true }
           hl["RenderMarkdownH" .. i .. "Bg"] = { bg = util.blend_bg(color, 0.1) }
           hl["RenderMarkdownH" .. i .. "Fg"] = { fg = color, bold = true }
         end
+        -- 表ヘッダのセル文字（treesitter が @markup.heading を当てる）: 白の太字
+        hl["@markup.heading.markdown"] = { fg = "#ffffff", bold = true }
         -- インラインコード: 既定 fg blue (#82aaff) を白に寄せる
         hl["@markup.raw.markdown_inline"] = { fg = "#b4ccff", bg = "#444a73" }
         -- 箇条書きの点・リスト: H4 と同じ teal
         hl.RenderMarkdownBullet = { fg = c.teal }
         hl["@markup.list"] = { fg = c.teal }
         hl["@markup.list.markdown"] = { fg = c.teal, bold = true }
-        -- 表: ヘッダ行の罫線は teal、データ行と行間罫線（自作 render-markdown.lua も config.row を使う）は通常の文字色
-        hl.RenderMarkdownTableHead = { fg = c.teal }
+        -- 表: ヘッダ行の罫線は桃 (#fca7ea)、データ行と行間罫線（自作 render-markdown.lua も config.row を使う）は通常の文字色
+        hl.RenderMarkdownTableHead = { fg = c.purple }
         hl.RenderMarkdownTableRow = { fg = c.fg }
+        -- 水平線 (---): 通常の文字色 (#c8d3f5) に灰色を 30% 混ぜた色
+        hl.RenderMarkdownDash = { fg = "#b2bad2" }
       end,
     },
   },
