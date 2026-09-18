@@ -41,7 +41,7 @@ focus_pane_right = "prefix+l"
 
 # --- タブ ---
 rename_tab = "prefix+comma"          # WezTerm: LEADER+, タブ名変更
-close_tab  = "prefix+shift+x"        # WezTerm: Cmd+W（herdr_keys.lua が prefix+X を送る前提。0.9.1 の既定と同じだが明示して固定）
+close_tab  = "prefix+shift+x"        # 0.9.1 の既定と同じだが明示して固定。WezTerm の Cmd+W は herdr 前面では無効化している（herdr_keys.lua）
 
 # --- ワークスペース ---
 workspace_picker = "prefix+w"        # WezTerm: LEADER+w ワークスペース選択

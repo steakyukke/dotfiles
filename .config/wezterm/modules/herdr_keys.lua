@@ -17,7 +17,7 @@
 --   focus_pane_*     = prefix+hjkl ← WezTerm Alt+hjkl / Ctrl+Shift+hjkl
 --   resize_pane_*    = ctrl+alt+hjkl ← WezTerm Ctrl+Shift+Alt+hjkl
 --   new_tab          = prefix+c   ← WezTerm Cmd+T
---   close_tab        = prefix+shift+x ← WezTerm Cmd+W
+--   close_tab        = prefix+shift+x ← WezTerm Cmd+W は herdr 前面では無効（何も送らない）
 --   next_tab         = prefix+n   ← WezTerm Ctrl+Tab
 --   previous_tab     = prefix+p   ← WezTerm Ctrl+Shift+Tab
 --   switch_workspace = alt+1..9   ← WezTerm Ctrl+1..9
@@ -116,9 +116,9 @@ local keys = {
   { key = "l", mods = "CTRL|SHIFT|ALT", action = herdr_or({ { key = "l", mods = "CTRL|ALT" } }, act.AdjustPaneSize({ "Right", 1 })) },
 
   -- タブ操作
-  -- herdr の prefix+shift+x は prefix の後に大文字 "X" が届けばよいので、mods なしで "X" を送る
   { key = "t", mods = "SUPER", action = herdr_or(prefixed("c"), act.SpawnTab("CurrentPaneDomain")) },
-  { key = "w", mods = "SUPER", action = herdr_or(prefixed("X"), act.CloseCurrentTab({ confirm = true })) },
+  -- Cmd+W: herdr 前面では何もしない（誤爆でタブを消さないため無効化）。herdr のタブを閉じるのは prefix+shift+x
+  { key = "w", mods = "SUPER", action = herdr_or({}, act.CloseCurrentTab({ confirm = true })) },
   { key = "Tab", mods = "CTRL", action = herdr_or(prefixed("n"), act.ActivateTabRelative(1)) },
   { key = "Tab", mods = "SHIFT|CTRL", action = herdr_or(prefixed("p"), act.ActivateTabRelative(-1)) },
 }
