@@ -3,7 +3,15 @@ return {
     "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
-    opts = { style = "moon" },
+    opts = {
+      style = "moon",
+      on_highlights = function(hl, c)
+        -- snacks explorer / picker: ドットファイルと .gitignore 対象のファイル名。
+        -- 既定は NonText (#545c7e) で暗すぎて読めないので、通常ファイル (Normal #c8d3f5) に寄せる
+        hl.SnacksPickerPathHidden = { fg = "#a9b1d6" }
+        hl.SnacksPickerPathIgnored = { fg = "#a9b1d6" }
+      end,
+    },
   },
   -- 起動時のデフォルト colorscheme を tokyonight-moon に固定
   {
