@@ -41,10 +41,15 @@ focus_pane_right = "prefix+l"
 
 # --- タブ ---
 rename_tab = "prefix+comma"          # WezTerm: LEADER+, タブ名変更
+close_tab  = "prefix+shift+x"        # WezTerm: Cmd+W（herdr_keys.lua が prefix+X を送る前提。0.9.1 の既定と同じだが明示して固定）
 
 # --- ワークスペース ---
 workspace_picker = "prefix+w"        # WezTerm: LEADER+w ワークスペース選択
 new_workspace    = "prefix+shift+c"  # WezTerm: LEADER+w → Shift+C 新規ワークスペース
+switch_workspace = "prefix+shift+1..9"  # 番号でワークスペース切替
+
+# --- Agents ---
+focus_agent = "prefix+alt+1..9"      # 番号で Agents 行にフォーカス
 
 # --- 既定と衝突するものを退避 ---
 settings = "prefix+shift+s"          # 既定 prefix+s を resize_mode に譲る
