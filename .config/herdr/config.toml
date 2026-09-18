@@ -46,7 +46,9 @@ close_tab  = "prefix+shift+x"        # WezTerm: Cmd+W（herdr_keys.lua が prefi
 # --- ワークスペース ---
 workspace_picker = "prefix+w"        # WezTerm: LEADER+w ワークスペース選択
 new_workspace    = "prefix+shift+c"  # WezTerm: LEADER+w → Shift+C 新規ワークスペース
-switch_workspace = "prefix+shift+1..9"  # 番号でワークスペース切替
+switch_workspace = "ctrl+1..9"       # 番号でワークスペース切替（prefix 不要の直接バインド）。
+                                     # herdr は modifyOtherKeys (CSI >4;2m) を要求するので WezTerm は Ctrl+数字を区別して送れる。
+                                     # macOS の「デスクトップ N へ切替」(Ctrl+N) は無効、Karabiner にも変換なし、WezTerm の Ctrl+N は setting_mode 内のみ
 
 # --- Agents ---
 focus_agent = "prefix+alt+1..9"      # 番号で Agents 行にフォーカス

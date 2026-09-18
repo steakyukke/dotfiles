@@ -7,9 +7,10 @@ return {
       style = "moon",
       on_highlights = function(hl, c)
         -- snacks explorer / picker: ドットファイルと .gitignore 対象のファイル名。
-        -- 既定は NonText (#545c7e) で暗すぎて読めないので、通常ファイル (Normal #c8d3f5) に寄せる
-        hl.SnacksPickerPathHidden = { fg = "#a9b1d6" }
-        hl.SnacksPickerPathIgnored = { fg = "#a9b1d6" }
+        -- 既定は NonText (#545c7e) で暗すぎて読めず、#a9b1d6 では通常ファイル (Normal #c8d3f5) と
+        -- 区別がつかなかったので、その中間の fg_dark (#828bb8) にする
+        hl.SnacksPickerPathHidden = { fg = c.fg_dark }
+        hl.SnacksPickerPathIgnored = { fg = c.fg_dark }
       end,
     },
   },
