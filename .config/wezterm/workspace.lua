@@ -49,8 +49,8 @@ local function toggle_nb_workspace()
   end)
 end
 
--- Switch to next workspace, skipping scratch and nb
-local function switch_to_next_workspace_skip_scratch()
+-- Switch workspace by delta (+1 = next / -1 = prev), skipping scratch and nb
+local function switch_workspace_skip_scratch(delta)
   return wezterm.action_callback(function(window, pane)
     local workspaces = wezterm.mux.get_workspace_names()
     local current = wezterm.mux.get_active_workspace()
@@ -62,40 +62,8 @@ local function switch_to_next_workspace_skip_scratch()
         table.insert(filtered, ws)
       end
     end
-
-    -- Find current index
-    local current_index = 1
-    for i, ws in ipairs(filtered) do
-      if ws == current then
-        current_index = i
-        break
-      end
-    end
-
-    -- Get next workspace
-    local next_index = current_index + 1
-    if next_index > #filtered then
-      next_index = 1
-    end
-
-    if #filtered > 0 then
-      window:perform_action(act.SwitchToWorkspace({ name = filtered[next_index] }), pane)
-    end
-  end)
-end
-
--- Switch to previous workspace, skipping scratch and nb
-local function switch_to_prev_workspace_skip_scratch()
-  return wezterm.action_callback(function(window, pane)
-    local workspaces = wezterm.mux.get_workspace_names()
-    local current = wezterm.mux.get_active_workspace()
-
-    -- Filter out scratch and nb workspaces
-    local filtered = {}
-    for _, ws in ipairs(workspaces) do
-      if ws ~= "scratch" and ws ~= "nb" then
-        table.insert(filtered, ws)
-      end
+    if #filtered == 0 then
+      return
     end
 
     -- Find current index
@@ -107,15 +75,9 @@ local function switch_to_prev_workspace_skip_scratch()
       end
     end
 
-    -- Get previous workspace
-    local prev_index = current_index - 1
-    if prev_index < 1 then
-      prev_index = #filtered
-    end
-
-    if #filtered > 0 then
-      window:perform_action(act.SwitchToWorkspace({ name = filtered[prev_index] }), pane)
-    end
+    -- Wrap around in both directions
+    local target_index = ((current_index - 1 + delta) % #filtered) + 1
+    window:perform_action(act.SwitchToWorkspace({ name = filtered[target_index] }), pane)
   end)
 end
 
@@ -125,8 +87,8 @@ local keys = {
   -- Toggle nb workspace with CTRL+CMD+b
   { key = "a", mods = "CTRL|CMD", action = toggle_nb_workspace() },
   -- Skip scratch and nb workspace when switching workspaces
-  { key = "n", mods = "CTRL|CMD", action = switch_to_next_workspace_skip_scratch() },
-  { key = "p", mods = "CTRL|CMD", action = switch_to_prev_workspace_skip_scratch() },
+  { key = "n", mods = "CTRL|CMD", action = switch_workspace_skip_scratch(1) },
+  { key = "p", mods = "CTRL|CMD", action = switch_workspace_skip_scratch(-1) },
 
   {
     mods = "LEADER",
@@ -219,7 +181,12 @@ function module.apply_to_config(config)
 end
 
 -- Export functions for use in keymaps.lua
-module.switch_to_next_workspace_skip_scratch = switch_to_next_workspace_skip_scratch
-module.switch_to_prev_workspace_skip_scratch = switch_to_prev_workspace_skip_scratch
+module.switch_workspace_skip_scratch = switch_workspace_skip_scratch
+module.switch_to_next_workspace_skip_scratch = function()
+  return switch_workspace_skip_scratch(1)
+end
+module.switch_to_prev_workspace_skip_scratch = function()
+  return switch_workspace_skip_scratch(-1)
+end
 
 return module

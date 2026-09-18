@@ -3,6 +3,17 @@ local act = wezterm.action
 local mux = wezterm.mux
 local module = {}
 
+-- ペイン生成時に渡す args。コマンドを実行し、終了後もログインシェルに戻る。
+-- send_text はプロンプト表示前の文字が捨てられるタイミング依存があるため使わない。
+-- -lc は非対話なので .zshrc は読まれない（abbr 等が要るコマンドは -lic を検討）
+local SHELL = os.getenv("SHELL") or "/bin/zsh"
+local function shell_args(command)
+	if not command then
+		return nil
+	end
+	return { SHELL, "-lc", command .. '; exec "' .. SHELL .. '" -l' }
+end
+
 -- =============================================================================
 -- プロジェクト定義
 --   ここに追記すれば、そのままランチャー（LEADER + o）に並ぶ
@@ -99,6 +110,7 @@ local function build_workspace(project)
 	local tab, top_left_pane = mux.spawn_window({
 		workspace = project.name,
 		cwd = project.cwd,
+		args = shell_args(cmd.top_left),
 	})
 
 	-- tab.lua のカスタムタイトル機構に合わせてタブ名を設定
@@ -115,6 +127,7 @@ local function build_workspace(project)
 			direction = "Right",
 			size = project.ratio or 0.4,
 			cwd = project.cwd,
+			args = shell_args(cmd.top_right),
 		})
 	end
 
@@ -123,6 +136,7 @@ local function build_workspace(project)
 			direction = "Bottom",
 			size = project.left_ratio or 0.5,
 			cwd = project.cwd,
+			args = shell_args(cmd.bottom_left),
 		})
 	end
 
@@ -131,15 +145,8 @@ local function build_workspace(project)
 			direction = "Bottom",
 			size = project.right_ratio or 0.5,
 			cwd = project.cwd,
+			args = shell_args(cmd.bottom_right),
 		})
-	end
-
-	-- 左上は最後に流す（先に流すと分割前に画面が埋まるため）
-	local order = { "top_right", "bottom_right", "bottom_left", "top_left" }
-	for _, position in ipairs(order) do
-		if panes[position] and cmd[position] then
-			panes[position]:send_text(cmd[position] .. "\n")
-		end
 	end
 
 	local focus = FOCUS_ALIAS[project.focus or ""] or "top_left"

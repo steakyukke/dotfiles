@@ -7,6 +7,9 @@ local UNFOCUSED_BG_DARKEN = 0.35
 local UNFOCUSED_FG_DARKEN = 0.15
 local UNFOCUSED_BORDER_DARKEN = 0.55
 
+-- 非フォーカス時に減光するか（false なら window-focus-changed で何もしない）
+local DIM_ON_UNFOCUS = false
+
 -- appearance.lua 適用後の基準値をスナップショット（wezterm.lua での require 順に依存）
 local base_opacity = 1.0
 local base_colors = {}
@@ -101,7 +104,7 @@ wezterm.on("window-focus-changed", function(window, pane)
   local overrides = window:get_config_overrides() or {}
   -- 透過はフォーカス状態に関わらず維持する
   overrides.window_background_opacity = base_opacity
-  if window:is_focused() then
+  if not DIM_ON_UNFOCUS or window:is_focused() then
     overrides.colors = nil
     overrides.window_frame = nil
   else

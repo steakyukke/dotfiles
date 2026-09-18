@@ -198,7 +198,8 @@ local keys = {
   { key = "Paste", mods = "NONE", action = act.PasteFrom("Clipboard") },
 
   -- Claude Codeで改行できるようにする
-  { key = "Enter", mods = "SHIFT", action = wezterm.action.SendString("\n") },
+  -- Ink の raw mode は LF 単体を改行として扱わないため ESC+CR を送る（Ghostty と同じ値）
+  { key = "Enter", mods = "SHIFT", action = wezterm.action.SendString("\x1b\r") },
 
   -- ScrollToPrompt
   { key = "[", mods = "ALT", action = act.ScrollToPrompt(-1) },
