@@ -80,9 +80,7 @@ return {
               key = "f",
               desc = "Find File",
               action = function()
-                local cwd = vim.fn.getcwd()
-                local hidden = cwd:match("dotfiles$") ~= nil
-                Snacks.picker.files({ cwd = cwd, hidden = hidden })
+                Snacks.picker.files({ cwd = vim.fn.getcwd() })
               end,
             },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
@@ -91,9 +89,7 @@ return {
               key = "g",
               desc = "Find Text",
               action = function()
-                local cwd = vim.fn.getcwd()
-                local hidden = cwd:match("dotfiles$") ~= nil
-                Snacks.picker.grep({ cwd = cwd, hidden = hidden })
+                Snacks.picker.grep({ cwd = vim.fn.getcwd() })
               end,
             },
             {
@@ -157,9 +153,44 @@ return {
           },
         },
         sources = {
+          files = {
+            hidden = true, -- ドットファイルを常に対象にする
+            ignored = true, -- .gitignore 対象も常に対象にする
+            -- 空入力時は最近よく開いたファイルを上に（半減期30日。記録は stdpath("data")/snacks/picker-frecency）
+            matcher = { frecency = true, sort_empty = true },
+          },
+          grep = {
+            hidden = true,
+            ignored = false, -- node_modules 等まで舐めると重いので OFF（ピッカー内 I で切替）
+          },
           explorer = {
             hidden = true, -- ドットファイル（.git など）を常に表示
             ignored = true, -- .gitignore 対象（node_modules など）も表示
+            actions = {
+              -- 標準の explorer_yank は setreg を直に呼ぶため TextYankPost が発火せず、
+              -- autocmds.lua の yank_to_clipboard に乗らない。自前で無名レジスタと + の両方に入れる
+              yank_path_clipboard = function(picker)
+                local paths = {}
+                for _, item in ipairs(picker:selected({ fallback = true })) do
+                  paths[#paths + 1] = Snacks.picker.util.path(item)
+                end
+                if #paths == 0 then
+                  return
+                end
+                local text = table.concat(paths, "\n")
+                local regtype = #paths == 1 and "c" or "l"
+                vim.fn.setreg('"', text, regtype)
+                vim.fn.setreg("+", text, regtype)
+                Snacks.notify.info(("Yanked %d path(s)"):format(#paths))
+              end,
+            },
+            win = {
+              list = {
+                keys = {
+                  ["y"] = { "yank_path_clipboard", mode = { "n", "x" } },
+                },
+              },
+            },
           },
           git_log_file = {
             focus = "list", -- Default focus to the list

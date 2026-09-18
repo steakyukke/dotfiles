@@ -92,17 +92,14 @@ keymap("n", "<leader>gG", function()
 end, { desc = "LazyGit (Root Dir)" })
 
 -- Find Files from project root
+-- hidden / ignored は plugins/base/snacks.lua の sources.files / sources.grep で常時 ON
 keymap("n", "<leader><leader>", function()
-  local cwd = get_git_root()
-  local hidden = cwd:match("dotfiles$") ~= nil
-  Snacks.picker.files({ cwd = cwd, hidden = hidden })
+  Snacks.picker.files({ cwd = get_git_root() })
 end, { desc = "Find Files (Root Dir)" })
 
 -- Grep from project root
 keymap("n", "<leader>/", function()
-  local cwd = get_git_root()
-  local hidden = cwd:match("dotfiles$") ~= nil
-  Snacks.picker.grep({ cwd = cwd, hidden = hidden })
+  Snacks.picker.grep({ cwd = get_git_root() })
 end, { desc = "Grep (Root Dir)" })
 
 -- browse under cursor
@@ -197,3 +194,43 @@ keymap("n", "z", function()
     vim.cmd("normal! z" .. char)
   end
 end, { desc = "Cycle scroll after zz / normal z commands" })
+
+-- Ctrl+Shift+W は WezTerm 側でも未割当（タブを閉じる誤爆防止）。Neovim でも何もしない
+keymap({ "n", "i", "v", "t" }, "<C-S-w>", "<Nop>", opts)
+
+-- Alt+V で矩形ビジュアル（Ctrl+V をターミナル側に取られた環境との互換。<C-q> は WezTerm の LEADER）
+keymap({ "n", "v" }, "<M-v>", "<C-v>", opts)
+
+-- yp / yP: 編集中ファイルのパスをヤンク（絶対 / LazyVim.root() からの相対）
+-- o（オペレータ待ち）モードに置く理由: which-key の「+Yank」パネルは o モードのツリーで、
+-- n モードに置くと一覧に載らず、y 単独のたびに timeoutlen 待ちが発生する
+local function yank_path(relative)
+  return function()
+    -- v:operator / v:register は <Esc> より前に読む
+    local operator, reg = vim.v.operator, vim.v.register
+    -- オペレータ待ちを抜ける（抜けないと次のキーがモーションとして食われる）
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+    -- o モードのツリーは全オペレータ共通なので dp / cp では何もしない
+    if operator ~= "y" then
+      return
+    end
+    local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p")
+    if relative then
+      local root = LazyVim.root() .. "/"
+      if path:sub(1, #root) == root then
+        path = path:sub(#root + 1)
+      end
+    end
+    -- 中断された y が無名レジスタを空で上書きするため schedule 越しに書く
+    vim.schedule(function()
+      vim.fn.setreg('"', path)
+      vim.fn.setreg("+", path)
+      if reg ~= '"' and reg ~= "" then
+        vim.fn.setreg(reg, path)
+      end
+      vim.notify("Yanked: " .. path)
+    end)
+  end
+end
+keymap("o", "p", yank_path(false), { desc = "Yank file path (absolute)" })
+keymap("o", "P", yank_path(true), { desc = "Yank file path (relative to root)" })
