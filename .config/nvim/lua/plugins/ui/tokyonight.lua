@@ -11,6 +11,27 @@ return {
         -- 区別がつかなかったので、その中間の fg_dark (#828bb8) にする
         hl.SnacksPickerPathHidden = { fg = c.fg_dark }
         hl.SnacksPickerPathIgnored = { fg = c.fg_dark }
+
+        -- markdown プレビュー (render-markdown.nvim) の配色
+        -- 見出し: 既定は H1 青 / H2 黄 / H3 緑。H1 黄 / H2 緑 / H3 青 に入れ替え（帯色も文字色に合わせて回す）
+        local util = require("tokyonight.util")
+        hl["@markup.heading.1.markdown"] = { fg = c.yellow, bg = util.blend_bg(c.yellow, 0.1), bold = true }
+        hl["@markup.heading.2.markdown"] = { fg = c.green, bg = util.blend_bg(c.green, 0.1), bold = true }
+        hl["@markup.heading.3.markdown"] = { fg = c.blue, bg = util.blend_bg(c.blue, 0.1), bold = true }
+        -- tokyonight は RenderMarkdownH{n}Bg / Fg も既定の色順で別途定義しているので、同じ順に揃える
+        for i, color in ipairs({ c.yellow, c.green, c.blue }) do
+          hl["RenderMarkdownH" .. i .. "Bg"] = { bg = util.blend_bg(color, 0.1) }
+          hl["RenderMarkdownH" .. i .. "Fg"] = { fg = color, bold = true }
+        end
+        -- インラインコード: 既定 fg blue (#82aaff) を白に寄せる
+        hl["@markup.raw.markdown_inline"] = { fg = "#b4ccff", bg = "#444a73" }
+        -- 箇条書きの点・リスト: H4 と同じ teal
+        hl.RenderMarkdownBullet = { fg = c.teal }
+        hl["@markup.list"] = { fg = c.teal }
+        hl["@markup.list.markdown"] = { fg = c.teal, bold = true }
+        -- 表: ヘッダ行の罫線は teal、データ行と行間罫線（自作 render-markdown.lua も config.row を使う）は通常の文字色
+        hl.RenderMarkdownTableHead = { fg = c.teal }
+        hl.RenderMarkdownTableRow = { fg = c.fg }
       end,
     },
   },
