@@ -91,6 +91,14 @@ keymap("n", "<leader>gG", function()
   Snacks.lazygit({ cwd = get_git_root() })
 end, { desc = "LazyGit (Root Dir)" })
 
+-- Swap Explorer keymaps to match LazyGit (e: cwd, E: root)
+keymap("n", "<leader>e", function()
+  Snacks.explorer({ cwd = vim.fn.getcwd() })
+end, { desc = "Explorer Snacks (cwd)" })
+keymap("n", "<leader>E", function()
+  Snacks.explorer({ cwd = get_git_root() })
+end, { desc = "Explorer Snacks (Root Dir)" })
+
 -- Find Files from project root
 -- hidden / ignored は plugins/base/snacks.lua の sources.files / sources.grep で常時 ON
 keymap("n", "<leader><leader>", function()
@@ -201,10 +209,11 @@ keymap({ "n", "i", "v", "t" }, "<C-S-w>", "<Nop>", opts)
 -- Alt+V で矩形ビジュアル（Ctrl+V をターミナル側に取られた環境との互換。<C-q> は WezTerm の LEADER）
 keymap({ "n", "v" }, "<M-v>", "<C-v>", opts)
 
--- yp / yP: 編集中ファイルのパスをヤンク（絶対 / LazyVim.root() からの相対）
+-- yp / yP: 編集中ファイルのパスをヤンク（絶対パス / ファイル名だけ）
+-- yP を相対パスにしない理由: Claude Code にはフルパスか、ファイル名で @ 補完させるかで足りるため
 -- o（オペレータ待ち）モードに置く理由: which-key の「+Yank」パネルは o モードのツリーで、
 -- n モードに置くと一覧に載らず、y 単独のたびに timeoutlen 待ちが発生する
-local function yank_path(relative)
+local function yank_path(name_only)
   return function()
     -- v:operator / v:register は <Esc> より前に読む
     local operator, reg = vim.v.operator, vim.v.register
@@ -215,11 +224,8 @@ local function yank_path(relative)
       return
     end
     local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p")
-    if relative then
-      local root = LazyVim.root() .. "/"
-      if path:sub(1, #root) == root then
-        path = path:sub(#root + 1)
-      end
+    if name_only then
+      path = vim.fn.fnamemodify(path, ":t")
     end
     -- 中断された y が無名レジスタを空で上書きするため schedule 越しに書く
     vim.schedule(function()
@@ -233,4 +239,4 @@ local function yank_path(relative)
   end
 end
 keymap("o", "p", yank_path(false), { desc = "Yank file path (absolute)" })
-keymap("o", "P", yank_path(true), { desc = "Yank file path (relative to root)" })
+keymap("o", "P", yank_path(true), { desc = "Yank file name" })

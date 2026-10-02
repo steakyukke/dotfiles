@@ -1,3 +1,38 @@
+-- explorer の y / Y: 選択中（無ければカーソル位置）のパスをヤンクする。
+-- 標準の explorer_yank は setreg を直に呼ぶため TextYankPost が発火せず、
+-- autocmds.lua の yank_to_clipboard に乗らない。自前で無名レジスタと + の両方に入れる。
+-- name_only = true ならファイル名・フォルダ名だけにする。
+local function explorer_yank(name_only)
+  return function(picker)
+    -- "ay のようにレジスタ指定されていたらそのレジスタにも入れる
+    local reg = vim.v.register
+    -- ビジュアルモードの範囲は選択に変換してから読む（しないとカーソル位置の 1 件だけになる）
+    if vim.fn.mode():find("^[vV]") then
+      picker.list:select()
+    end
+    local paths = {}
+    for _, item in ipairs(picker:selected({ fallback = true })) do
+      local path = Snacks.picker.util.path(item)
+      if name_only then
+        path = vim.fn.fnamemodify((path:gsub("/+$", "")), ":t")
+      end
+      paths[#paths + 1] = path
+    end
+    picker.list:set_selected() -- コピー後は選択を解除する
+    if #paths == 0 then
+      return
+    end
+    local text = table.concat(paths, "\n")
+    local regtype = #paths == 1 and "c" or "l"
+    vim.fn.setreg('"', text, regtype)
+    vim.fn.setreg("+", text, regtype)
+    if reg ~= '"' and reg ~= "+" and reg ~= "*" and reg ~= "" then
+      vim.fn.setreg(reg, text, regtype)
+    end
+    Snacks.notify.info("Copied: " .. table.concat(paths, ", "))
+  end
+end
+
 return {
   {
     "folke/snacks.nvim",
@@ -62,7 +97,7 @@ return {
         desc = "Git Log File (Enter=Browse, o=Checkout)",
       },
       {
-        "<leader>gD",
+        "<leader>gv", -- <leader>gD は Diffview (Root Dir) に譲った（plugins/editor/git.lua）
         function()
           Snacks.picker.git_diff({ base = "main" })
         end,
@@ -167,27 +202,14 @@ return {
             hidden = true, -- ドットファイル（.git など）を常に表示
             ignored = true, -- .gitignore 対象（node_modules など）も表示
             actions = {
-              -- 標準の explorer_yank は setreg を直に呼ぶため TextYankPost が発火せず、
-              -- autocmds.lua の yank_to_clipboard に乗らない。自前で無名レジスタと + の両方に入れる
-              yank_path_clipboard = function(picker)
-                local paths = {}
-                for _, item in ipairs(picker:selected({ fallback = true })) do
-                  paths[#paths + 1] = Snacks.picker.util.path(item)
-                end
-                if #paths == 0 then
-                  return
-                end
-                local text = table.concat(paths, "\n")
-                local regtype = #paths == 1 and "c" or "l"
-                vim.fn.setreg('"', text, regtype)
-                vim.fn.setreg("+", text, regtype)
-                Snacks.notify.info(("Yanked %d path(s)"):format(#paths))
-              end,
+              yank_path_clipboard = explorer_yank(false), -- 絶対パス
+              yank_name_clipboard = explorer_yank(true), -- ファイル名・フォルダ名だけ
             },
             win = {
               list = {
                 keys = {
                   ["y"] = { "yank_path_clipboard", mode = { "n", "x" } },
+                  ["Y"] = { "yank_name_clipboard", mode = { "n", "x" } },
                 },
               },
             },

@@ -507,17 +507,31 @@ return {
         },
       })
 
-      -- Diffview toggle mapping
-      local key_opts = { noremap = true, silent = true, desc = "Toggle Diffview" }
-      local function toggle_diffview()
+      -- Diffview toggle mapping (gd: cwd, gD: git root で <leader>e/E・gg/gG と同じ関係)
+      -- get_git_root は config/keymaps.lua にも同じものがある
+      local function get_git_root()
+        local buf_dir = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
+        local result = vim.system(
+          { "git", "-C", buf_dir, "rev-parse", "--show-toplevel" },
+          { text = true, timeout = 3000 }
+        ):wait()
+        return (result.code == 0 and vim.trim(result.stdout)) or LazyVim.root.get({ buf = 0 })
+      end
+
+      local function toggle_diffview(dir)
         local view = require("diffview.lib").get_current_view()
         if view then
           vim.cmd("DiffviewClose")
         else
-          vim.cmd("DiffviewOpen")
+          vim.cmd("DiffviewOpen -C" .. vim.fn.fnameescape(dir))
         end
       end
-      vim.keymap.set("n", "<leader>gd", toggle_diffview, key_opts)
+      vim.keymap.set("n", "<leader>gd", function()
+        toggle_diffview(vim.fn.getcwd())
+      end, { noremap = true, silent = true, desc = "Toggle Diffview (cwd)" })
+      vim.keymap.set("n", "<leader>gD", function()
+        toggle_diffview(get_git_root())
+      end, { noremap = true, silent = true, desc = "Toggle Diffview (Root Dir)" })
     end,
   },
   {

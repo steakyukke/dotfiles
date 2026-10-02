@@ -1,4 +1,6 @@
--- render-markdown.nvim の表に「行と行のあいだの横罫線」を足す。
+-- render-markdown.nvim への手入れ 2 つ。
+--   1. 引用の縦線を折り返し行にも出す（末尾の opts 関数）
+--   2. 表に「行と行のあいだの横罫線」を足す（以下の説明とパッチ）
 --
 -- 本体には行区切りを描く設定が無い。pipe_table.border が持つのは
 -- 上端 3 文字・区切り行 3 文字・下端 3 文字 + 縦線 + 横線の 11 文字だけで、
@@ -81,6 +83,16 @@ return {
   --（setup + <leader>um のトグル登録）を上書きしないため。
   -- opts の関数はプラグインが rtp に載ったあとに評価されるので require できる。
   opts = function(_, opts)
+    -- 引用の縦線（'>' の上に overlay で描く仮想文字）を折り返し行の先頭にも繰り返す。
+    -- 繰り返した縦線は折り返し行の先頭 1 セルを覆って本文を 1 文字隠すので、showbreak を
+    -- 空白 2 つにして覆われる場所を空ける。breakindent / breakindentopt は本体の設定コメントが
+    -- 「動く組み合わせ」として挙げる値。レンダリング中だけ当て、生表示に戻るときは元の値に戻る。
+    opts.quote = vim.tbl_deep_extend("force", opts.quote or {}, { repeat_linebreak = true })
+    opts.win_options = vim.tbl_deep_extend("force", opts.win_options or {}, {
+      showbreak = { default = vim.o.showbreak, rendered = "  " },
+      breakindent = { default = vim.o.breakindent, rendered = true },
+      breakindentopt = { default = vim.o.breakindentopt, rendered = "" },
+    })
     patch()
     return opts
   end,

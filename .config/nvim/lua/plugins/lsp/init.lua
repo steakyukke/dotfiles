@@ -69,6 +69,17 @@ return {
         default = {
           cmdline = {}, -- Disable cmdline completions (conflicts with Snacks picker)
         },
+        providers = {
+          snippets = {
+            -- friendly-snippets の markdown テーブルスニペット（2x1table 〜 5x5table）は
+            -- 数字 1 文字の入力にあいまい一致して邪魔なので候補から除外する
+            transform_items = function(_, items)
+              return vim.tbl_filter(function(item)
+                return not (item.label or ""):match("^%dx%dtable$")
+              end, items)
+            end,
+          },
+        },
       },
     },
   },

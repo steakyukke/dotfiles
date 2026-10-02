@@ -21,6 +21,7 @@
 --   next_tab         = prefix+n   ← WezTerm Ctrl+Tab
 --   previous_tab     = prefix+p   ← WezTerm Ctrl+Shift+Tab
 --   switch_workspace = alt+1..9   ← WezTerm Ctrl+1..9
+--   focus_agent      = prefix+alt+1..9 ← WezTerm Ctrl+Opt+1..9
 --     （Ctrl+数字は WezTerm が ESC[27;5;49~ 形式で送り herdr が解釈できないため、ESC+数字 = Alt+数字 に変換して送る）
 --
 -- LEADER (Ctrl+q) 系のキーは herdr に転送せず、WezTerm のまま扱う。
@@ -36,14 +37,40 @@ local module = {}
 -- herdr の prefix キー（config.toml の [keys].prefix と合わせる）
 local HERDR_PREFIX = { key = "b", mods = "CTRL" }
 
--- フォアグラウンドプロセスが herdr かどうか
-local function is_herdr(pane)
-  local name = pane:get_foreground_process_name()
+-- プロセス名（フルパス可）が herdr かどうか
+local function is_herdr_name(name)
   if not name then
     return false
   end
-  local base = name:match("([^/]+)$") or name
+  local base = name:match("([^/\\]+)$") or name
   return base == "herdr"
+end
+
+-- プロセスツリーのどこかに herdr がいるか
+local function has_herdr(info, depth)
+  if not info or depth > 4 then
+    return false
+  end
+  if is_herdr_name(info.name) or is_herdr_name(info.executable) then
+    return true
+  end
+  for _, child in pairs(info.children or {}) do
+    if has_herdr(child, depth + 1) then
+      return true
+    end
+  end
+  return false
+end
+
+-- フォアグラウンドプロセスが herdr かどうか
+-- projects.lua は herdr を `zsh -lc "herdr; exec zsh -l"` で起動するため、フォアグラウンドの
+-- プロセスグループリーダーは zsh になり、get_foreground_process_name() は zsh を返す。
+-- その場合は子プロセスまで辿って herdr を探す。
+local function is_herdr(pane)
+  if is_herdr_name(pane:get_foreground_process_name()) then
+    return true
+  end
+  return has_herdr(pane:get_foreground_process_info(), 0)
 end
 module.is_herdr = is_herdr
 
@@ -131,6 +158,17 @@ for n = 1, 9 do
     key = key,
     mods = "CTRL",
     action = herdr_or({ { key = key, mods = "ALT" } }, act.SendKey({ key = key, mods = "CTRL" })),
+  })
+end
+
+-- Agents 行へのフォーカス (Ctrl+Opt+1..9)
+-- herdr 側は focus_agent = "prefix+alt+1..9"。herdr 以外のペインではそのまま送る
+for n = 1, 9 do
+  local key = tostring(n)
+  table.insert(keys, {
+    key = key,
+    mods = "CTRL|ALT",
+    action = herdr_or(prefixed(key, "ALT"), act.SendKey({ key = key, mods = "CTRL|ALT" })),
   })
 end
 
