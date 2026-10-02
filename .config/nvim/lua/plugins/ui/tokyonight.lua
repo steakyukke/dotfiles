@@ -11,6 +11,10 @@ return {
         -- 区別がつかなかったので、その中間の fg_dark (#828bb8) にする
         hl.SnacksPickerPathHidden = { fg = c.fg_dark }
         hl.SnacksPickerPathIgnored = { fg = c.fg_dark }
+        -- snacks explorer: git 未追跡のファイルと、それを含むフォルダの名前・記号。
+        -- 既定は NonText (#545c7e) で灰色に沈むので cyan (#86e1fc) にする
+        -- （変更=黄 / ステージ済み=teal / 追加=緑 / 削除=赤 と被らない色）
+        hl.SnacksPickerGitStatusUntracked = { fg = c.cyan }
 
         -- markdown プレビュー (render-markdown.nvim) の配色
         -- 見出し: 既定は 青 / 黄 / 緑 / teal / 紫 / 桃 の順。H1 黄 / H2 青 / H3 紫 / H4 teal / H5 緑 / H6 桃 に変更。
