@@ -53,7 +53,8 @@ switch_workspace = "alt+1..9"        # 番号でワークスペース切替（pr
                                      # 「flushing lone escape」警告になる (herdr-client.log 2026-09-18)。Alt+数字は ESC+数字で確実に届く
 
 # --- Agents ---
-focus_agent = "prefix+alt+1..9"      # 番号で Agents 行にフォーカス
+focus_agent = "prefix+alt+1..9"      # 番号で Agents 行にフォーカス。操作は Ctrl+Shift+1..9。
+                                     # WezTerm が herdr 前面のときだけ prefix+Alt+N に変換して送る（herdr_keys.lua）
 
 # --- 既定と衝突するものを退避 ---
 settings = "prefix+shift+s"          # 既定 prefix+s を resize_mode に譲る

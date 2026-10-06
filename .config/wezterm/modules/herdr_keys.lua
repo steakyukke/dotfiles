@@ -21,7 +21,7 @@
 --   next_tab         = prefix+n   ← WezTerm Ctrl+Tab
 --   previous_tab     = prefix+p   ← WezTerm Ctrl+Shift+Tab
 --   switch_workspace = alt+1..9   ← WezTerm Ctrl+1..9
---   focus_agent      = prefix+alt+1..9 ← WezTerm Ctrl+Opt+1..9
+--   focus_agent      = prefix+alt+1..9 ← WezTerm Ctrl+Shift+1..9
 --     （Ctrl+数字は WezTerm が ESC[27;5;49~ 形式で送り herdr が解釈できないため、ESC+数字 = Alt+数字 に変換して送る）
 --
 -- LEADER (Ctrl+q) 系のキーは herdr に転送せず、WezTerm のまま扱う。
@@ -161,14 +161,15 @@ for n = 1, 9 do
   })
 end
 
--- Agents 行へのフォーカス (Ctrl+Opt+1..9)
+-- Agents 行へのフォーカス (Ctrl+Shift+1..9)
 -- herdr 側は focus_agent = "prefix+alt+1..9"。herdr 以外のペインではそのまま送る
+-- Shift+数字は配列によって記号（! や " など）に化けるので、物理キー (phys:) で受ける
 for n = 1, 9 do
   local key = tostring(n)
   table.insert(keys, {
-    key = key,
-    mods = "CTRL|ALT",
-    action = herdr_or(prefixed(key, "ALT"), act.SendKey({ key = key, mods = "CTRL|ALT" })),
+    key = "phys:" .. key,
+    mods = "CTRL|SHIFT",
+    action = herdr_or(prefixed(key, "ALT"), act.SendKey({ key = key, mods = "CTRL|SHIFT" })),
   })
 end
 
